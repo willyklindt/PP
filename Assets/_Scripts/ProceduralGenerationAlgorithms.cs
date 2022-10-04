@@ -17,6 +17,20 @@ public static class ProceduralGenerationAlgorithms //static klasse. Klassen kan 
             previousPosition = newPosition;
         }
         return path; //returnerer listen, path (oversigt over hvilken path algoritmen tegner)
+    }               
+                //Her bruger vi List. Man kan nemlig via List tilgå sidste element i listen, og så kan vi derved finde lastPosition. Altså gå i en tilfældig retning, og derefter gå i en ny tilfældig retning med udgangspunkt i last pos ( så hænger corridors sammen)
+    public static List<Vector2Int> RandomWalkCorridor(Vector2Int startPosition, int corridorLength) //Denne metode vælger en tilfældig retning, og går den vej ift. corridorLength. Dette laver gangene
+    {
+            List<Vector2Int> corridor = new List<Vector2Int>();
+            var direction = Direction2D.GetRandomCardinalDirections(); //Direction bliver sat til random direction 
+            var currentPosition = startPosition;
+            corridor.Add(currentPosition);
+            for (int i = 0; i < corridorLength; i++)
+            {
+                currentPosition += direction;
+                corridor.Add(currentPosition);
+            }
+            return corridor;
     }
 }
 
