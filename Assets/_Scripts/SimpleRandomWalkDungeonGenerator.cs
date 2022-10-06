@@ -10,7 +10,7 @@ public class SimpleRandomWalkDungeonGenerator : AbstractDungeonGenerator //Arver
     
 
     [SerializeField]
-    private SimpleRandomWalkSO randomWalkParameters; //Laver en SerializedField, som er af typen "SimpleRandomWalkSO.cs". 
+    protected SimpleRandomWalkSO randomWalkParameters; //Laver en SerializedField, som er af typen "SimpleRandomWalkSO.cs". Er sat til protected, da med private kan CorridorFirsgDungeonGenerator ikke tilgå denne her
                                                         //hvorfor er dette smart? Fordi SimpleRandomWalkSO.cs laves til et SO (Scriptable Object) i Unity editor. Så kan man nu lave SaveStates, der gemmer parametre
     
  
@@ -19,14 +19,14 @@ public class SimpleRandomWalkDungeonGenerator : AbstractDungeonGenerator //Arver
 
 
     protected override void RunProceduralGeneration(){ //Denne klasse er sat til override, da den overskriver/arver metoden fra AbstractDungeonGenerator
-        HashSet<Vector2Int> floorPositions = RunRandomWalk(randomWalkParameters); //Tillader at child classes af SimpleRandomWalkDungeonGenerator 
+        HashSet<Vector2Int> floorPositions = RunRandomWalk(randomWalkParameters, startPosition); //Tillader at child classes af SimpleRandomWalkDungeonGenerator.
         tilemapVisualizer.Clear(); //Clear tilemap, så man ikke skal gøre det i alle child classes
        tilemapVisualizer.PaintFloorTiles(floorPositions);
        WallGenerator.CreateWalls(floorPositions, tilemapVisualizer);
     }
 
-    protected HashSet<Vector2Int> RunRandomWalk(SimpleRandomWalkSO parameters){
-        var currentPosition = startPosition;
+    protected HashSet<Vector2Int> RunRandomWalk(SimpleRandomWalkSO parameters, Vector2Int position){ //Denne har fået parametre Vector2Int position, da vi derfor også kan bruge denne metode i CorridorFirstDungeonGenerator
+        var currentPosition = position;
         HashSet<Vector2Int> floorPositions = new HashSet<Vector2Int>();
         for (int i = 0; i < parameters.iterations; i++)
         {

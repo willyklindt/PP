@@ -32,6 +32,63 @@ public static class ProceduralGenerationAlgorithms //static klasse. Klassen kan 
             }
             return corridor;
     }
+
+    public static List<BoundsInt> BinarySpacePartitioning(BoundsInt spaceToSplit, int minWidth, int minHeight){
+        Queue<BoundsInt> roomsQueue = new Queue<BoundsInt>();
+        List<BoundsInt> roomsList = new List<BoundsInt>();
+        roomsQueue.Enqueue(spaceToSplit); //tager spaceToSplit, og tilføjer dem til queue i roomsQueue
+        while (roomsQueue.Count > 0)
+        {
+            var room = roomsQueue.Dequeue(); //fjerner pågældende element fra queuen
+            if (room.size.y >= minHeight && room.size.x >= minWidth) // room.size.y er height af rum. room.size.x er width af rum
+            {                                                       //dette if statement kører, hvis et rums width og height er større eller = minimumsgrænsen. Således kan der enten laves et rum, eller der kan deles op i 2 rum
+                if(UnityEngine.Random.value < 0.5f)
+                {
+                    if (room.size.y >= minHeight*2) //Hvis rums højde er større en minHeight * 2
+                    {
+                        SplitHorizontally(minWidth, minHeight, roomsQueue, room); //Split rum i 2
+                    } else if (room.size.x >= minWidth * 2) //ellers hvis rums width er større end minWidth * 2 
+                    {
+                        SplitVertically(minWidth, minHeight, roomsQueue, room); //Split rum i 2
+                    } else //ellers hvis rum ikke kan splittes, så skal den bare laves
+                    {
+                        roomsList.Add(room); //Tilføjer room til roomsList
+                    }
+                }
+                else //med dette elsestatement, kører vi samme kode som ovenstående (bare omvendt). Altså er der 50% chance for, at den enten starter med at splitte horizontalt, eller om den skal starte med vertikalt. 
+                {
+                   
+                     if (room.size.x >= minWidth * 2) //ellers hvis rums width er større end minWidth * 2 
+                    {
+                        SplitVertically(minWidth, minHeight, roomsQueue, room); //Split rum i 2
+                    } 
+                         else if (room.size.y >= minHeight*2) //Hvis rums højde er større en minHeight * 2
+                    {
+                        SplitHorizontally(minWidth, minHeight, roomsQueue, room); //Split rum i 2
+                    } 
+                    
+                    else //ellers hvis rum ikke kan splittes, så skal den bare laves
+                    {
+                        roomsList.Add(room); //Tilføjer room til roomsList
+                    }
+
+                    
+                }
+            }
+        }
+        return roomsList;
+        
+    }
+
+    private static void SplitVertically(int minWidth, int minHeight, Queue<BoundsInt> roomsQueue, BoundsInt room)
+    {
+        int testNummer = 0;
+    }
+    
+    private static void SplitHorizontally(int minWidth, int minHeight, Queue<BoundsInt> roomsQueue, BoundsInt room)
+    {
+        int testNummer = 0;
+    }
 }
 
 public static class Direction2D{
