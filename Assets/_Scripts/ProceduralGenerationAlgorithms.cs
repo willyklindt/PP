@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random; //importerer brug af Unitys random funktion
 
 public static class ProceduralGenerationAlgorithms //static klasse. Klassen kan derfor ikke blive instatiated
 {                                                       //startPosition (hvor algoritmen starter), walkLength (Hvor mange "skridt" algoritmen skal tage)
@@ -33,7 +34,7 @@ public static class ProceduralGenerationAlgorithms //static klasse. Klassen kan 
             return corridor;
     }
 
-    public static List<BoundsInt> BinarySpacePartitioning(BoundsInt spaceToSplit, int minWidth, int minHeight){
+    public static List<BoundsInt> BinarySpacePartitioning(BoundsInt spaceToSplit, int minWidth, int minHeight){ //BoundsInt bruges for at lave BoundBox i únity
         Queue<BoundsInt> roomsQueue = new Queue<BoundsInt>();
         List<BoundsInt> roomsList = new List<BoundsInt>();
         roomsQueue.Enqueue(spaceToSplit); //tager spaceToSplit, og tilføjer dem til queue i roomsQueue
@@ -46,10 +47,10 @@ public static class ProceduralGenerationAlgorithms //static klasse. Klassen kan 
                 {
                     if (room.size.y >= minHeight*2) //Hvis rums højde er større en minHeight * 2
                     {
-                        SplitHorizontally(minWidth, minHeight, roomsQueue, room); //Split rum i 2
+                        SplitHorizontally(minHeight, roomsQueue, room); //Split rum i 2
                     } else if (room.size.x >= minWidth * 2) //ellers hvis rums width er større end minWidth * 2 
                     {
-                        SplitVertically(minWidth, minHeight, roomsQueue, room); //Split rum i 2
+                        SplitVertically(minWidth, roomsQueue, room); //Split rum i 2
                     } else //ellers hvis rum ikke kan splittes, så skal den bare laves
                     {
                         roomsList.Add(room); //Tilføjer room til roomsList
@@ -60,11 +61,11 @@ public static class ProceduralGenerationAlgorithms //static klasse. Klassen kan 
                    
                      if (room.size.x >= minWidth * 2) //ellers hvis rums width er større end minWidth * 2 
                     {
-                        SplitVertically(minWidth, minHeight, roomsQueue, room); //Split rum i 2
+                        SplitVertically(minWidth, roomsQueue, room); //Split rum i 2
                     } 
                          else if (room.size.y >= minHeight*2) //Hvis rums højde er større en minHeight * 2
                     {
-                        SplitHorizontally(minWidth, minHeight, roomsQueue, room); //Split rum i 2
+                        SplitHorizontally(minHeight, roomsQueue, room); //Split rum i 2
                     } 
                     
                     else //ellers hvis rum ikke kan splittes, så skal den bare laves
@@ -80,14 +81,23 @@ public static class ProceduralGenerationAlgorithms //static klasse. Klassen kan 
         
     }
 
-    private static void SplitVertically(int minWidth, int minHeight, Queue<BoundsInt> roomsQueue, BoundsInt room)
+    private static void SplitVertically(int minWidth, Queue<BoundsInt> roomsQueue, BoundsInt room) 
     {
-        int testNummer = 0;
+        var xSplit = Random.Range(1, room.size.x); //Width af rum 2, når der splittes, er room.min.x + xSplit, rum 2's nye min er altså værdien af xSplit
+        BoundsInt room1 = new BoundsInt(room.min, new Vector3Int(xSplit, room.size.y, room.size.z)); //1. rum der genereres. BoundsInt skal have min værdi, dette er room.size, samt den skal have en size, det er Fector3Int(xSplit)
+        BoundsInt room2 = new BoundsInt(new Vector3Int(room.min.x + xSplit, room.min.y, room.min.z), new Vector3Int(room.size.x - xSplit, room.size.y, room.size.z)); //splitter til nummer 2 rum.
+
+        roomsQueue.Enqueue(room1);
+        roomsQueue.Enqueue(room2);
     }
     
-    private static void SplitHorizontally(int minWidth, int minHeight, Queue<BoundsInt> roomsQueue, BoundsInt room)
+    private static void SplitHorizontally(int minHeight, Queue<BoundsInt> roomsQueue, BoundsInt room)
     {
-        int testNummer = 0;
+        var ySplit = Random.Range(1, room.size.y);
+        BoundsInt room1 = new BoundsInt(room.min, new Vector3Int(room.size.x, ySplit, room.size.z));
+        BoundsInt room2 = new BoundsInt(new Vector3Int(room.min.x, room.min.y + ySplit, room.min.z), new Vector3Int(room.size.x, room.size.y - ySplit, room.size.z));
+        roomsQueue.Enqueue(room1);
+        roomsQueue.Enqueue(room2);
     }
 }
 
